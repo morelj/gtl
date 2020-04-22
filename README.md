@@ -16,7 +16,7 @@ The template format documentation is available [here](https://golang.org/pkg/tex
 You can install it using the `go` command:
 
 ```bash
-go install github.com/morelj/gtl
+go get github.com/morelj/gtl
 ```
 
 Or just download a pre-compiled binary for your system.
