@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strconv"
 	"strings"
@@ -78,6 +79,46 @@ func templateSet(m map[string]interface{}, kv ...interface{}) map[string]interfa
 		m[k] = kv[i+1]
 	}
 	return m
+}
+
+func templateBase64Encode(v string) string {
+	return base64.StdEncoding.EncodeToString(([]byte)(v))
+}
+
+func templateBase64RawEncode(v string) string {
+	return base64.RawStdEncoding.EncodeToString(([]byte)(v))
+}
+
+func templateBase64URLEncode(v string) string {
+	return base64.URLEncoding.EncodeToString(([]byte)(v))
+}
+
+func templateBase64RawURLEncode(v string) string {
+	return base64.RawURLEncoding.EncodeToString(([]byte)(v))
+}
+
+func base64Decode(v string, e *base64.Encoding) string {
+	data, err := e.DecodeString(v)
+	if err != nil {
+		panic(err)
+	}
+	return string(data)
+}
+
+func templateBase64Decode(v string) string {
+	return base64Decode(v, base64.StdEncoding)
+}
+
+func templateBase64RawDecode(v string) string {
+	return base64Decode(v, base64.RawStdEncoding)
+}
+
+func templateBase64URLDecode(v string) string {
+	return base64Decode(v, base64.URLEncoding)
+}
+
+func templateBase64RawURLDecode(v string) string {
+	return base64Decode(v, base64.RawURLEncoding)
 }
 
 func templateFilter(e interface{}, filters ...FilterFunc) interface{} {

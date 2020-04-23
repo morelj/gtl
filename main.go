@@ -83,14 +83,37 @@ func buildEnvironment(dataFiles, dataInline string) *Environment {
 }
 
 func createTemplate(name string) *template.Template {
-	return template.New(name).Funcs(template.FuncMap{"split": templateSplit, "exists": templateExists,
-		"has_value": templateHasValue, "default": templateDefault, "concat": templateConcat,
-		"trim_prefix": templateTrimPrefix, "trim_suffix": templateTrimSuffix, "slice": templateSlice,
-		"append": templateAppend, "map": templateMap, "set": templateSet, "first_match": templateFirstMatch,
-		"filter": templateFilter, "filter_map_value": templateFilterMapValue,
-		"filter_slice_value": templateFilterSliceValue, "filter_eq": templateFilterEq, "filter_not": templateFilterNot,
-		"filter_or": templateFilterOr, "filter_and": templateFilterAnd, "filter_to_int": templateFilterToInt,
-		"filter_to_string": templateFilterToString})
+	return template.New(name).Funcs(template.FuncMap{
+		"split":                 templateSplit,
+		"exists":                templateExists,
+		"has_value":             templateHasValue,
+		"default":               templateDefault,
+		"concat":                templateConcat,
+		"trim_prefix":           templateTrimPrefix,
+		"trim_suffix":           templateTrimSuffix,
+		"slice":                 templateSlice,
+		"append":                templateAppend,
+		"map":                   templateMap,
+		"set":                   templateSet,
+		"base64_encode":         templateBase64Encode,
+		"base64_raw_encode":     templateBase64RawEncode,
+		"base64_url_encode":     templateBase64URLEncode,
+		"base64_raw_url_encode": templateBase64RawURLEncode,
+		"base64_decode":         templateBase64Decode,
+		"base64_raw_decode":     templateBase64RawDecode,
+		"base64_url_decode":     templateBase64URLDecode,
+		"base64_raw_url_decode": templateBase64RawURLDecode,
+		"first_match":           templateFirstMatch,
+		"filter":                templateFilter,
+		"filter_map_value":      templateFilterMapValue,
+		"filter_slice_value":    templateFilterSliceValue,
+		"filter_eq":             templateFilterEq,
+		"filter_not":            templateFilterNot,
+		"filter_or":             templateFilterOr,
+		"filter_and":            templateFilterAnd,
+		"filter_to_int":         templateFilterToInt,
+		"filter_to_string":      templateFilterToString,
+	})
 }
 
 func loadTemplate(source string) *template.Template {
@@ -162,6 +185,7 @@ func main() {
 		fmt.Println("        Returns a new map/slice containing the elements matching the filters. Filters are built using filter_* functions")
 		fmt.Println("    first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Returns the first value of v which matches all the filters. Filters are build using filter_* functions")
+		fmt.Println("\nAvailable filter functions, for use with filter or first_match:")
 		fmt.Println("    filter_map_value <key string> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the map")
 		fmt.Println("    filter_slice_value <index int> <filter1 FilterFunc> ... <filterN FilterFunc>")
