@@ -192,7 +192,7 @@ func main() {
 		fmt.Println("    first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Returns the first value of v which matches all the filters. Filters are build using filter_* functions")
 		fmt.Println("\nAvailable filter functions, for use with filter or first_match:")
-		fmt.Println("    filter_map_value <key string> <filter1 FilterFunc> ... <filterN FilterFunc>")
+		fmt.Println("\n    filter_map_value <key string> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the map")
 		fmt.Println("    filter_slice_value <index int> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the slice")
