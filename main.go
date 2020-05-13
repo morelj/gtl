@@ -91,7 +91,7 @@ func createTemplate(name string) *template.Template {
 		"concat":                templateConcat,
 		"trim_prefix":           templateTrimPrefix,
 		"trim_suffix":           templateTrimSuffix,
-		"slice":                 templateSlice,
+		"make_slice":            templateSlice,
 		"append":                templateAppend,
 		"map":                   templateMap,
 		"set":                   templateSet,
@@ -173,7 +173,7 @@ func main() {
 		fmt.Println("        Removes the prefix from s. Do nothing if s does not start with prefix")
 		fmt.Println("    trim_suffix <suffix string> <s string>")
 		fmt.Println("        Removes the suffix from s. Do nothing if s does not end with suffix")
-		fmt.Println("    slice <val1 interface{}> ... <valN interface{}>")
+		fmt.Println("    make_slice <val1 interface{}> ... <valN interface{}>")
 		fmt.Println("        Returns a slice containing all the arguments")
 		fmt.Println("    append <s []interface{}> <val1 interface{}> ... <valN interface{}>")
 		fmt.Println("        Appends val1 to valN to the slice s, and returns the resulting slice")
