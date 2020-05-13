@@ -95,6 +95,10 @@ func createTemplate(name string) *template.Template {
 		"append":                templateAppend,
 		"map":                   templateMap,
 		"set":                   templateSet,
+		"to_upper":              strings.ToUpper,
+		"to_lower":              strings.ToLower,
+		"to_upper_first":        templateToUpperFirst,
+		"to_lower_first":        templateToLowerFirst,
 		"base64_encode":         templateBase64Encode,
 		"base64_raw_encode":     templateBase64RawEncode,
 		"base64_url_encode":     templateBase64URLEncode,
@@ -181,6 +185,14 @@ func main() {
 		fmt.Println("        Builds a new map with the given keys and values")
 		fmt.Println("    set <m map[string]interface{}> <key1 string> <val1 interface{}> ... <keyN string> <valN interface{}>")
 		fmt.Println("        Sets the given keys and values to the map m, and returns it")
+		fmt.Println("    to_upper <value string>")
+		fmt.Println("        Converts value to upper case")
+		fmt.Println("    to_lower <value string>")
+		fmt.Println("        Converts value to lower case")
+		fmt.Println("    to_upper_first <value string>")
+		fmt.Println("        Converts the first character of value to upper case and leave the rest untouched")
+		fmt.Println("    to_lower_first <value string>")
+		fmt.Println("        Converts the first character of value to lower case and leave the rest untouched")
 		fmt.Println("    base64[_url][_raw]_encode <val string>")
 		fmt.Println("        Encodes val in Base64. This function comes in several variants by adding the _url and _raw tags.")
 		fmt.Println("        _raw variants remove the = padding characters, and _url variants use the alternate URL compliant alphabet")

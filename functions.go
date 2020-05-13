@@ -81,6 +81,20 @@ func templateSet(m map[string]interface{}, kv ...interface{}) map[string]interfa
 	return m
 }
 
+func templateToUpperFirst(v string) string {
+	if v == "" {
+		return ""
+	}
+	return strings.ToUpper(v[0]) + v[1:]
+}
+
+func templateToLowerFirst(v string) string {
+	if v == "" {
+		return ""
+	}
+	return strings.ToLower(v[0]) + v[1:]
+}
+
 func templateBase64Encode(v string) string {
 	return base64.StdEncoding.EncodeToString(([]byte)(v))
 }
