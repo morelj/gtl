@@ -15,6 +15,9 @@ import (
 // ReleaseName is the name of the release (injected at compile time)
 var ReleaseName = "unknown"
 
+// ReleaseCommit is the commit of the release (injected at compile time)
+var ReleaseCommit = "unknown"
+
 // ReleaseDate is the date of the release (injected at compile time)
 var ReleaseDate = "unknown"
 
@@ -232,7 +235,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		fmt.Printf("gtl build %s on %s\n", ReleaseName, ReleaseDate)
+		fmt.Printf("gtl release %s (commit %s) on %s\n", ReleaseName, ReleaseCommit, ReleaseDate)
 		os.Exit(0)
 	}
 
