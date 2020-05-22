@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -133,6 +134,18 @@ func templateBase64URLDecode(v string) string {
 
 func templateBase64RawURLDecode(v string) string {
 	return base64Decode(v, base64.RawURLEncoding)
+}
+
+func templateRegexp(v string) *regexp.Regexp {
+	return regexp.MustCompile(v)
+}
+
+func templateReplace(old, new string, n int, s string) string {
+	return strings.Replace(s, old, new, n)
+}
+
+func templateReplaceAll(old, new, s string) string {
+	return strings.ReplaceAll(s, old, new)
 }
 
 func templateFilter(e interface{}, filters ...FilterFunc) interface{} {

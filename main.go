@@ -110,6 +110,9 @@ func createTemplate(name string) *template.Template {
 		"base64_raw_decode":     templateBase64RawDecode,
 		"base64_url_decode":     templateBase64URLDecode,
 		"base64_raw_url_decode": templateBase64RawURLDecode,
+		"regexp":                templateRegexp,
+		"replace":               templateReplace,
+		"replace_all":           templateReplaceAll,
 		"first_match":           templateFirstMatch,
 		"filter":                templateFilter,
 		"filter_map_value":      templateFilterMapValue,
@@ -202,6 +205,13 @@ func main() {
 		fmt.Println("    base64[_url][_raw]_decode <val string>")
 		fmt.Println("        Decodes val from Base64. This function comes in several variants by adding the _url and _raw tags.")
 		fmt.Println("        _raw variants remove the = padding characters, and _url variants use the alternate URL compliant alphabet")
+		fmt.Println("    regexp <regexp string>")
+		fmt.Println("        Compiles a regexp (using regexp.MustCompile) and returns the regexp. Standard regexp methods can then be used on it.")
+		fmt.Println("        See https://golang.org/pkg/regexp/ for details.")
+		fmt.Println("    replace <old string> <new string> <n int> <s string>")
+		fmt.Println("        Returns a copy of the string s with the first n non-overlapping instances of old replaced by new.")
+		fmt.Println("    replace_all <old string> <new string> <s string>")
+		fmt.Println("        Returns a copy of the string s with all non-overlapping instances of old replaced by new.")
 		fmt.Println("    filter <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Returns a new map/slice containing the elements matching the filters. Filters are built using filter_* functions")
 		fmt.Println("    first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
