@@ -70,6 +70,7 @@ In addition to the default features provided by the Go templating language, the 
 * `regexp <regexp string>` -Compiles a regexp (using regexp.MustCompile) and returns the regexp. Standard regexp methods can then be used on it. See https://golang.org/pkg/regexp/ for details.
 * `replace <old string> <new string> <n int> <s string>` - Returns a copy of the string s with the first n non-overlapping instances of old replaced by new.
 * `replace_all <old string> <new string> <s string>` - Returns a copy of the string s with all non-overlapping instances of old replaced by new.
+* `add|sub|mul|div <int1> ... <intN>` - Returns the result of the addition/substraction/multiplication/division of the ints.
 * `filter <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>` - Returns a new map/slice containing the elements matching the filters. Filters are built using `filter_*` functions
 * `first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>` - Returns the first value of v which matches all the filters. Filters are build using `filter_*` functions
 

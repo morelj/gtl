@@ -279,3 +279,16 @@ func filterAnd(v interface{}, filters []FilterFunc) bool {
 	}
 	return true
 }
+
+func templateArith(f func(acc, v int) int) func(vals ...int) int {
+	return func(vals ...int) int {
+		if len(vals) == 0 {
+			return 0
+		}
+		res := vals[0]
+		for i := 1; i < len(vals); i++ {
+			res = f(res, vals[i])
+		}
+		return res
+	}
+}
