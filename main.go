@@ -127,6 +127,7 @@ func createTemplate(name string) *template.Template {
 		"sub":                   templateArith(func(acc, v int) int { return acc - v }),
 		"mul":                   templateArith(func(acc, v int) int { return acc * v }),
 		"div":                   templateArith(func(acc, v int) int { return acc / v }),
+		"read_file":             templateReadFile,
 	})
 }
 
@@ -218,6 +219,8 @@ func main() {
 		fmt.Println("        Returns a copy of the string s with all non-overlapping instances of old replaced by new.")
 		fmt.Println("    add|sub|mul|div <int1> ... <intN>")
 		fmt.Println("        Returns the result of the addition/substraction/multiplication/division of the ints.")
+		fmt.Println("    read_file <filename>")
+		fmt.Println("        Reads the given filename and returns its content as a string. Panics if an error occurs")
 		fmt.Println("    filter <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
 		fmt.Println("        Returns a new map/slice containing the elements matching the filters. Filters are built using filter_* functions")
 		fmt.Println("    first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")

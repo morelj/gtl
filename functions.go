@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"regexp"
 	"strconv"
 	"strings"
@@ -291,4 +292,12 @@ func templateArith(f func(acc, v int) int) func(vals ...int) int {
 		}
 		return res
 	}
+}
+
+func templateReadFile(filename string) string {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	return string(data)
 }
