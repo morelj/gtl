@@ -1,11 +1,16 @@
 package function
 
 import (
+	"regexp"
 	"strings"
 	"text/template"
 )
 
 const stringCategory = "String"
+
+var lettersRegexp = regexp.MustCompile(`[[:alpha:]]+`)
+var nonLettersRegexp = regexp.MustCompile(`[[:^alpha]]+`)
+var camelCaseRegexp = regexp.MustCompile(`[[:upper:]][[:lower:]]*`)
 
 var stringFuncs = []FunctionSet{
 	{
@@ -92,6 +97,32 @@ var stringFuncs = []FunctionSet{
 		Description: []string{"Returns a copy of the string s with all non-overlapping instances of old replaced by new."},
 		Functions: template.FuncMap{"replace_all": func(old, new, s string) string {
 			return strings.ReplaceAll(s, old, new)
+		}},
+	},
+	{
+		Category:    stringCategory,
+		Syntax:      "to_camel_case <s string>",
+		Description: []string{"Converts a snake_case string to CamelCase"},
+		Functions: template.FuncMap{"to_camel_case": func(s string) string {
+			s = lettersRegexp.ReplaceAllStringFunc(s, func(match string) string {
+				if len(match) > 0 {
+					return strings.ToUpper(match[0:1]) + strings.ToLower(match[1:])
+				}
+				return ""
+			})
+			return nonLettersRegexp.ReplaceAllString(s, "")
+		}},
+	},
+	{
+		Category:    stringCategory,
+		Syntax:      "to_snake_case <s string>",
+		Description: []string{"Converts a CamelCase string to snake_case"},
+		Functions: template.FuncMap{"to_snake_case": func(s string) string {
+			matches := camelCaseRegexp.FindAllString(s, -1)
+			for i := range matches {
+				matches[i] = strings.ToLower(matches[i])
+			}
+			return strings.Join(matches, "_")
 		}},
 	},
 }
