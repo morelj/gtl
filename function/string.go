@@ -9,7 +9,7 @@ import (
 const stringCategory = "String"
 
 var lettersRegexp = regexp.MustCompile(`[[:alpha:]]+`)
-var nonLettersRegexp = regexp.MustCompile(`[[:^alpha]]+`)
+var nonLettersRegexp = regexp.MustCompile(`[[:^alpha:]]+`)
 var camelCaseRegexp = regexp.MustCompile(`[[:upper:]][[:lower:]]*`)
 
 var stringFuncs = []FunctionSet{
