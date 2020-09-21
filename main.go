@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/morelj/gtl/function"
 )
 
 // ReleaseName is the name of the release (injected at compile time)
@@ -86,49 +88,13 @@ func buildEnvironment(dataFiles, dataInline string) *Environment {
 }
 
 func createTemplate(name string) *template.Template {
-	return template.New(name).Funcs(template.FuncMap{
-		"split":                 templateSplit,
-		"exists":                templateExists,
-		"has_value":             templateHasValue,
-		"default":               templateDefault,
-		"concat":                templateConcat,
-		"trim_prefix":           templateTrimPrefix,
-		"trim_suffix":           templateTrimSuffix,
-		"make_slice":            templateSlice,
-		"append":                templateAppend,
-		"map":                   templateMap,
-		"set":                   templateSet,
-		"to_upper":              strings.ToUpper,
-		"to_lower":              strings.ToLower,
-		"to_upper_first":        templateToUpperFirst,
-		"to_lower_first":        templateToLowerFirst,
-		"base64_encode":         templateBase64Encode,
-		"base64_raw_encode":     templateBase64RawEncode,
-		"base64_url_encode":     templateBase64URLEncode,
-		"base64_raw_url_encode": templateBase64RawURLEncode,
-		"base64_decode":         templateBase64Decode,
-		"base64_raw_decode":     templateBase64RawDecode,
-		"base64_url_decode":     templateBase64URLDecode,
-		"base64_raw_url_decode": templateBase64RawURLDecode,
-		"regexp":                templateRegexp,
-		"replace":               templateReplace,
-		"replace_all":           templateReplaceAll,
-		"first_match":           templateFirstMatch,
-		"filter":                templateFilter,
-		"filter_map_value":      templateFilterMapValue,
-		"filter_slice_value":    templateFilterSliceValue,
-		"filter_eq":             templateFilterEq,
-		"filter_not":            templateFilterNot,
-		"filter_or":             templateFilterOr,
-		"filter_and":            templateFilterAnd,
-		"filter_to_int":         templateFilterToInt,
-		"filter_to_string":      templateFilterToString,
-		"add":                   templateArith(func(acc, v int) int { return acc + v }),
-		"sub":                   templateArith(func(acc, v int) int { return acc - v }),
-		"mul":                   templateArith(func(acc, v int) int { return acc * v }),
-		"div":                   templateArith(func(acc, v int) int { return acc / v }),
-		"read_file":             templateReadFile,
-	})
+	funcs := template.FuncMap{}
+	for i := range function.Functions {
+		for k, v := range function.Functions[i].Functions {
+			funcs[k] = v
+		}
+	}
+	return template.New(name).Funcs(funcs)
 }
 
 func loadTemplate(source string) *template.Template {
@@ -173,76 +139,20 @@ func main() {
 		fmt.Println("\nThe value of . (dot) exposed to the template is a struct with the following content:")
 		fmt.Println("    .Env  - A map contaning all evironment variables (e.g. .Env.HOME)")
 		fmt.Println("    .Data - The data provided using the -d and -D command line flags")
-		fmt.Println("\nIn addition to the default features provided by the Go templating language, the following functions are provided:")
-		fmt.Println("\n    split <sep string> <value string>")
-		fmt.Println("        Splits value on sep and returns a slice containing each part")
-		fmt.Println("    exists <value interface{}>")
-		fmt.Println("        Return true if value is not nil, false otherwise")
-		fmt.Println("    has_value <value interface{}>")
-		fmt.Println("        Same as exists but also returns fals if value is an empty string")
-		fmt.Println("    default <default interface{}> <value interface{}>")
-		fmt.Println("        If has_value value returns true, returns value otherwise returns default")
-		fmt.Println("    concat <str1 string> ... <strN string>")
-		fmt.Println("        Returns all its arguments concatenated")
-		fmt.Println("    trim_prefix <prefix string> <s string>")
-		fmt.Println("        Removes the prefix from s. Do nothing if s does not start with prefix")
-		fmt.Println("    trim_suffix <suffix string> <s string>")
-		fmt.Println("        Removes the suffix from s. Do nothing if s does not end with suffix")
-		fmt.Println("    make_slice <val1 interface{}> ... <valN interface{}>")
-		fmt.Println("        Returns a slice containing all the arguments")
-		fmt.Println("    append <s []interface{}> <val1 interface{}> ... <valN interface{}>")
-		fmt.Println("        Appends val1 to valN to the slice s, and returns the resulting slice")
-		fmt.Println("    map <key1 string> <val1 interface{}> ... <keyN string> <valN interface{}>")
-		fmt.Println("        Builds a new map with the given keys and values")
-		fmt.Println("    set <m map[string]interface{}> <key1 string> <val1 interface{}> ... <keyN string> <valN interface{}>")
-		fmt.Println("        Sets the given keys and values to the map m, and returns it")
-		fmt.Println("    to_upper <value string>")
-		fmt.Println("        Converts value to upper case")
-		fmt.Println("    to_lower <value string>")
-		fmt.Println("        Converts value to lower case")
-		fmt.Println("    to_upper_first <value string>")
-		fmt.Println("        Converts the first character of value to upper case and leave the rest untouched")
-		fmt.Println("    to_lower_first <value string>")
-		fmt.Println("        Converts the first character of value to lower case and leave the rest untouched")
-		fmt.Println("    base64[_url][_raw]_encode <val string>")
-		fmt.Println("        Encodes val in Base64. This function comes in several variants by adding the _url and _raw tags.")
-		fmt.Println("        _raw variants remove the = padding characters, and _url variants use the alternate URL compliant alphabet")
-		fmt.Println("    base64[_url][_raw]_decode <val string>")
-		fmt.Println("        Decodes val from Base64. This function comes in several variants by adding the _url and _raw tags.")
-		fmt.Println("        _raw variants remove the = padding characters, and _url variants use the alternate URL compliant alphabet")
-		fmt.Println("    regexp <regexp string>")
-		fmt.Println("        Compiles a regexp (using regexp.MustCompile) and returns the regexp. Standard regexp methods can then be used on it.")
-		fmt.Println("        See https://golang.org/pkg/regexp/ for details.")
-		fmt.Println("    replace <old string> <new string> <n int> <s string>")
-		fmt.Println("        Returns a copy of the string s with the first n non-overlapping instances of old replaced by new.")
-		fmt.Println("    replace_all <old string> <new string> <s string>")
-		fmt.Println("        Returns a copy of the string s with all non-overlapping instances of old replaced by new.")
-		fmt.Println("    add|sub|mul|div <int1> ... <intN>")
-		fmt.Println("        Returns the result of the addition/substraction/multiplication/division of the ints.")
-		fmt.Println("    read_file <filename>")
-		fmt.Println("        Reads the given filename and returns its content as a string. Panics if an error occurs")
-		fmt.Println("    filter <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Returns a new map/slice containing the elements matching the filters. Filters are built using filter_* functions")
-		fmt.Println("    first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Returns the first value of v which matches all the filters. Filters are build using filter_* functions")
-		fmt.Println("\nAvailable filter functions, for use with filter or first_match:")
-		fmt.Println("\n    filter_map_value <key string> <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the map")
-		fmt.Println("    filter_slice_value <index int> <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the slice")
-		fmt.Println("    filter_eq <v interface{}>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which checks whether the value equals v")
-		fmt.Println("    filter_not <filter FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which negates filter")
-		fmt.Println("    filter_or <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which checks if at least one filter matches")
-		fmt.Println("    filter_and <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which checks if all filters match")
-		fmt.Println("    filter_to_int <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters using the value converted to an int")
-		fmt.Println("    filter_to_string <filter1 FilterFunc> ... <filterN FilterFunc>")
-		fmt.Println("        Use with filter or first_match. Returns a FilterFunc which applies filters using the value converted to a string")
-		fmt.Printf("\n")
+		fmt.Printf("\nIn addition to the default features provided by the Go templating language, the following functions are provided:\n\n")
+
+		for _, group := range function.Functions.ByCategory() {
+			if len(group) > 0 {
+				fmt.Printf("%s functions\n\n", group[0].Category)
+				for _, f := range group {
+					fmt.Printf("  %s\n", f.Syntax)
+					for _, line := range f.Description {
+						fmt.Printf("    %s\n", line)
+					}
+				}
+				fmt.Printf("\n")
+			}
+		}
 	}
 
 	templateFile := flag.String("i", "", "Source template file (- for stdin), defaults to stdin (mutually exlusive with -t)")
