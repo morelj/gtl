@@ -12,7 +12,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/morelj/gtl/function"
+	"github.com/morelj/gtl/internal/function"
 )
 
 // ReleaseName is the name of the release (injected at compile time)
