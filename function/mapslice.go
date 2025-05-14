@@ -10,44 +10,44 @@ const mapSliceCategory = "Maps and slices"
 var mapSliceFuncs = []FunctionSet{
 	{
 		Category:    mapSliceCategory,
-		Syntax:      "make_slice <val1 interface{}> ... <valN interface{}>",
+		Syntax:      "make_slice <val1 any> ... <valN any>",
 		Description: []string{"Returns a slice containing all the arguments"},
-		Functions: template.FuncMap{"make_slice": func(e ...interface{}) []interface{} {
+		Functions: template.FuncMap{"make_slice": func(e ...any) []any {
 			return e
 		}},
 	},
 	{
 		Category:    mapSliceCategory,
-		Syntax:      "append <s []interface{}> <val1 interface{}> ... <valN interface{}>",
+		Syntax:      "append <s []any> <val1 any> ... <valN any>",
 		Description: []string{"Appends val1 to valN to the slice s, and returns the resulting slice"},
-		Functions: template.FuncMap{"append": func(s []interface{}, e ...interface{}) []interface{} {
+		Functions: template.FuncMap{"append": func(s []any, e ...any) []any {
 			return append(s, e...)
 		}},
 	},
 	{
 		Category:    mapSliceCategory,
-		Syntax:      "map <key1 string> <val1 interface{}> ... <keyN string> <valN interface{}>",
+		Syntax:      "map <key1 string> <val1 any> ... <keyN string> <valN any>",
 		Description: []string{"Builds a new map with the given keys and values"},
-		Functions: template.FuncMap{"map": func(kv ...interface{}) map[string]interface{} {
-			ret := make(map[string]interface{})
+		Functions: template.FuncMap{"map": func(kv ...any) map[string]any {
+			ret := make(map[string]any)
 			mapSet(ret, kv...)
 			return ret
 		}},
 	},
 	{
 		Category:    mapSliceCategory,
-		Syntax:      "set <m map[string]interface{}> <key1 string> <val1 interface{}> ... <keyN string> <valN interface{}>",
+		Syntax:      "set <m map[string]any> <key1 string> <val1 any> ... <keyN string> <valN any>",
 		Description: []string{"Sets the given keys and values to the map m, and returns it"},
 		Functions:   template.FuncMap{"set": mapSet},
 	},
 	{
 		Category:    mapSliceCategory,
-		Syntax:      "filter <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>",
+		Syntax:      "filter <v map[string]any|[]any> <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Returns a new map/slice containing the elements matching the filters. Filters are built using filter_* functions"},
-		Functions: template.FuncMap{"filter": func(e interface{}, filters ...FilterFunc) interface{} {
+		Functions: template.FuncMap{"filter": func(e any, filters ...FilterFunc) any {
 			switch v := e.(type) {
-			case []interface{}:
-				filtered := make([]interface{}, 0, len(v))
+			case []any:
+				filtered := make([]any, 0, len(v))
 				for i := range v {
 					if filterAnd(v[i], filters) {
 						filtered = append(filtered, v[i])
@@ -55,8 +55,8 @@ var mapSliceFuncs = []FunctionSet{
 				}
 				return filtered
 
-			case map[string]interface{}:
-				filtered := make(map[string]interface{})
+			case map[string]any:
+				filtered := make(map[string]any)
 				for k, v := range v {
 					if filterAnd(v, filters) {
 						filtered[k] = v
@@ -71,11 +71,11 @@ var mapSliceFuncs = []FunctionSet{
 	},
 	{
 		Category:    mapSliceCategory,
-		Syntax:      "first_match <v map[string]interface{}|[]interface{}> <filter1 FilterFunc> ... <filterN FilterFunc>",
+		Syntax:      "first_match <v map[string]any|[]any> <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Returns the first value of v which matches all the filters. Filters are build using filter_* functions"},
-		Functions: template.FuncMap{"first_match": func(e interface{}, filters ...FilterFunc) interface{} {
+		Functions: template.FuncMap{"first_match": func(e any, filters ...FilterFunc) any {
 			switch v := e.(type) {
-			case []interface{}:
+			case []any:
 				for i := range v {
 					if filterAnd(v[i], filters) {
 						return v[i]
@@ -83,7 +83,7 @@ var mapSliceFuncs = []FunctionSet{
 				}
 				return nil
 
-			case map[string]interface{}:
+			case map[string]any:
 				for _, v := range v {
 					if filterAnd(v, filters) {
 						return v
@@ -95,7 +95,7 @@ var mapSliceFuncs = []FunctionSet{
 	},
 }
 
-func mapSet(m map[string]interface{}, kv ...interface{}) map[string]interface{} {
+func mapSet(m map[string]any, kv ...any) map[string]any {
 	if len(kv)%2 != 0 {
 		panic("Invalid number of arguments")
 	}

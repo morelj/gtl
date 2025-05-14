@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -25,7 +26,7 @@ var ReleaseDate = "unknown"
 
 // Environment contains the data exposed to the template as the dot
 type Environment struct {
-	Data map[string]interface{}
+	Data map[string]any
 	Env  map[string]string
 }
 
@@ -45,7 +46,7 @@ func parseEnvironment() (map[string]string, error) {
 	return env, nil
 }
 
-func loadJSON(path string, target interface{}) {
+func loadJSON(path string, target any) {
 	file, err := os.Open(path)
 	if err != nil {
 		panic(err.Error())
@@ -63,7 +64,7 @@ func loadJSON(path string, target interface{}) {
 }
 
 func buildEnvironment(dataFiles, dataInline string) *Environment {
-	env := Environment{Data: make(map[string]interface{})}
+	env := Environment{Data: make(map[string]any)}
 	var err error
 
 	// Environment variables
@@ -90,9 +91,7 @@ func buildEnvironment(dataFiles, dataInline string) *Environment {
 func createTemplate(name string) *template.Template {
 	funcs := template.FuncMap{}
 	for i := range function.Functions {
-		for k, v := range function.Functions[i].Functions {
-			funcs[k] = v
-		}
+		maps.Copy(funcs, function.Functions[i].Functions)
 	}
 	return template.New(name).Funcs(funcs)
 }

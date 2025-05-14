@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-type FilterFunc func(v interface{}) bool
+type FilterFunc func(v any) bool
 
 const filterCategory = "Filter"
 
@@ -16,8 +16,8 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_map_value <key string> <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the map"},
 		Functions: template.FuncMap{"filter_map_value": func(k string, filters ...FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
-				m := v.(map[string]interface{})
+			return func(v any) bool {
+				m := v.(map[string]any)
 				return filterAnd(m[k], filters)
 			}
 		}},
@@ -27,18 +27,18 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_slice_value <index int> <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which applies filters to one value of the slice"},
 		Functions: template.FuncMap{"fliter_slice_value": func(i int, filters ...FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
-				s := v.([]interface{})
+			return func(v any) bool {
+				s := v.([]any)
 				return filterAnd(s[i], filters)
 			}
 		}},
 	},
 	{
 		Category:    filterCategory,
-		Syntax:      "filter_eq <v interface{}>",
+		Syntax:      "filter_eq <v any>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which checks whether the value equals v"},
-		Functions: template.FuncMap{"filter_eq": func(v1 interface{}) FilterFunc {
-			return func(v2 interface{}) bool {
+		Functions: template.FuncMap{"filter_eq": func(v1 any) FilterFunc {
+			return func(v2 any) bool {
 				return v1 == v2
 			}
 		}},
@@ -48,7 +48,7 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_not <filter FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which negates filter"},
 		Functions: template.FuncMap{"filter_not": func(filter FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
+			return func(v any) bool {
 				return !filter(v)
 			}
 		}},
@@ -58,7 +58,7 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_or <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which checks if at least one filter matches"},
 		Functions: template.FuncMap{"filter_or": func(filters ...FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
+			return func(v any) bool {
 				for _, filter := range filters {
 					if filter(v) {
 						return true
@@ -73,7 +73,7 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_and <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which checks if all filters match"},
 		Functions: template.FuncMap{"filter_and": func(filters ...FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
+			return func(v any) bool {
 				return filterAnd(v, filters)
 			}
 		}},
@@ -83,7 +83,7 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_to_int <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which applies filters using the value converted to an int"},
 		Functions: template.FuncMap{"filter_to_int": func(filters ...FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
+			return func(v any) bool {
 				switch v := v.(type) {
 				case int:
 					return filterAnd(v, filters)
@@ -116,14 +116,14 @@ var filterFuncs = []FunctionSet{
 		Syntax:      "filter_to_string <filter1 FilterFunc> ... <filterN FilterFunc>",
 		Description: []string{"Use with filter or first_match. Returns a FilterFunc which applies filters using the value converted to a string"},
 		Functions: template.FuncMap{"filter_to_string": func(filters ...FilterFunc) FilterFunc {
-			return func(v interface{}) bool {
+			return func(v any) bool {
 				return filterAnd(fmt.Sprintf("%v", v), filters)
 			}
 		}},
 	},
 }
 
-func filterAnd(v interface{}, filters []FilterFunc) bool {
+func filterAnd(v any, filters []FilterFunc) bool {
 	for _, filter := range filters {
 		if !filter(v) {
 			return false

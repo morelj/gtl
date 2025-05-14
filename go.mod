@@ -1,3 +1,3 @@
 module github.com/morelj/gtl
 
-go 1.14
+go 1.23
