@@ -63,7 +63,7 @@ func loadJSON(path string, target any) {
 	}
 }
 
-func buildEnvironment(dataFiles, dataInline string) *Environment {
+func buildEnvironment(dataFiles string, dataInline []string) *Environment {
 	env := Environment{Data: make(map[string]any)}
 	var err error
 
@@ -79,8 +79,8 @@ func buildEnvironment(dataFiles, dataInline string) *Environment {
 			loadJSON(files[i], &env.Data)
 		}
 	}
-	if dataInline != "" {
-		if err = json.Unmarshal([]byte(dataInline), &env.Data); err != nil {
+	for _, data := range dataInline {
+		if err = json.Unmarshal([]byte(data), &env.Data); err != nil {
 			panic(err.Error())
 		}
 	}
@@ -158,7 +158,8 @@ func main() {
 	templateInline := flag.String("t", "", "Specify an inline template (mutually exclusive with -i)")
 	outputFile := flag.String("o", "-", "Output file (- for stdout), defaults to stdout")
 	dataFiles := flag.String("d", "", fmt.Sprintf("A list of JSON files to load as data, separated with %c", os.PathListSeparator))
-	dataInline := flag.String("D", "", "An inline JSON to expose to the template as data")
+	var dataInline multiStringValueFlag
+	flag.Var(&dataInline, "D", "An inline JSON to expose to the template as data (can appear more than once)")
 	version := flag.Bool("version", false, "Show the version number and quit")
 	flag.Parse()
 
@@ -171,7 +172,7 @@ func main() {
 		panic("-i and -t are mutually exclusive")
 	}
 
-	env := buildEnvironment(*dataFiles, *dataInline)
+	env := buildEnvironment(*dataFiles, dataInline)
 
 	var tmpl *template.Template
 	if *templateInline != "" {
